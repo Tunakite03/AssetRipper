@@ -1,5 +1,7 @@
+﻿using AssetRipper.Assets;
 using AssetRipper.Assets.Bundles;
 using AssetRipper.Assets.Collections;
+using AssetRipper.Assets.Metadata;
 using AssetRipper.Primitives;
 using AssetRipper.Processing.Textures;
 using AssetRipper.SourceGenerated.Classes.ClassID_213;
@@ -77,6 +79,21 @@ public class SpriteInformationObjectTests
 		SpriteInformationObject group = CreateGroup(collection, texture);
 		group.AddToDictionary(sprite, atlas);
 
-		Assert.That(group.FetchDependencies().Any(d => d.Item1.Contains("Value")), Is.True);
+		Assert.Multiple(() =>
+		{
+			Assert.That(ResolveDependency(group, nameof(SpriteInformationObject.Texture)), Is.SameAs(texture));
+			Assert.That(ResolveDependency(group, nameof(SpriteInformationObject.Sprites) + "[].Key"), Is.SameAs(sprite));
+			Assert.That(ResolveDependency(group, nameof(SpriteInformationObject.Sprites) + "[].Value"), Is.SameAs(atlas));
+		});
+	}
+
+	/// <summary>
+	/// Resolves the one dependency named <paramref name="name"/>, so that the assertion is on the
+	/// referenced asset rather than on the name of the dependency.
+	/// </summary>
+	private static IUnityObjectBase? ResolveDependency(SpriteInformationObject group, string name)
+	{
+		PPtr pptr = group.FetchDependencies().Single(pair => pair.Item1 == name).Item2;
+		return group.Collection.TryGetAsset(pptr);
 	}
 }
