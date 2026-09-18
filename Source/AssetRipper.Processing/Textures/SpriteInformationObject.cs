@@ -33,8 +33,10 @@ public sealed class SpriteInformationObject : AssetGroup, INamed
 	/// several texture pages, and each page gets its own <see cref="SpriteInformationObject"/>,
 	/// so no single group owns the atlas. Including it made every group after the first assert
 	/// in <see cref="AssetGroup.SetMainAsset"/>. The atlas is still reachable through
-	/// <see cref="Sprites"/> and is still reported by <see cref="FetchDependencies"/>; nothing
-	/// reads an atlas's <see cref="IUnityObjectBase.MainAsset"/>.
+	/// <see cref="Sprites"/> and is still reported by <see cref="FetchDependencies"/>. Nothing in
+	/// the texture export path reads an atlas's <see cref="IUnityObjectBase.MainAsset"/>: the
+	/// texture export collection works from <see cref="Texture"/> and <see cref="Sprites"/>, and
+	/// sprite atlases are exported by their own exporter.
 	/// </remarks>
 	public override IEnumerable<IUnityObjectBase> Assets
 	{
